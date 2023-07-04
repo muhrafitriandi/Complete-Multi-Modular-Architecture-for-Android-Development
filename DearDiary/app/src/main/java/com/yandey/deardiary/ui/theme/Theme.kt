@@ -81,6 +81,7 @@ private val DarkColors = darkColorScheme(
 )
 
 
+
 @Composable
 fun DearDiaryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
