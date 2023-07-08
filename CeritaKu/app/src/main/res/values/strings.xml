@@ -3,4 +3,5 @@
 
     <string name="button_sign_in_with_google">Masuk dengan Google</string>
     <string name="button_please_wait">Harap tunggu…</string>
+    <string name="message_bar_successfully_authenticated">Autentikasi Berhasil!</string>
 </resources>
