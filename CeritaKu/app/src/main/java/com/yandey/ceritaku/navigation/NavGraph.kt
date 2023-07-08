@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.yandey.ceritaku.presentation.screens.auth.AuthenticationScreen
 import com.yandey.ceritaku.util.Constants.KEY_DIARY_ID
 
 @Composable
@@ -20,7 +21,12 @@ fun NavGraph(startDestination: String, navHostController: NavHostController) {
 
 fun NavGraphBuilder.authenticationRoute() {
     composable(route = Screen.Authentication.route) {
+        AuthenticationScreen(
+            loadingState = false,
+            onButtonClicked = {
 
+            }
+        )
     }
 }
 

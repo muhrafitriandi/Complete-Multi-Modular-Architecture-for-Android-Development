@@ -3,7 +3,7 @@
 
     <style name="Theme.CeritaKu.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">#FCFCFF</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ceritaku_logo</item>
         <item name="postSplashScreenTheme">@style/Theme.CeritaKu</item>
     </style>
 </resources>
