@@ -7,10 +7,14 @@ import com.yandey.ceritaku.util.Constants.APP_ID
 import io.realm.kotlin.mongodb.App
 import io.realm.kotlin.mongodb.Credentials
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AuthenticationViewModel : ViewModel() {
+
+    var authenticated = mutableStateOf(false)
+        private set
 
     var loadingState = mutableStateOf(false)
         private set
@@ -35,6 +39,8 @@ class AuthenticationViewModel : ViewModel() {
                 }
                 withContext(Dispatchers.Main) {
                     onSuccess(result)
+                    delay(600)
+                    authenticated.value = true
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
