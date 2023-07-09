@@ -11,6 +11,7 @@ import com.yandey.ceritaku.ui.theme.Green
 import com.yandey.ceritaku.ui.theme.Red
 import com.yandey.ceritaku.ui.theme.Yellow
 import com.yandey.ceritaku.util.Constants.APP_ID
+import com.yandey.ceritaku.util.Constants.COLOR_ANIMATION_DURATION_MILLIS
 import io.realm.kotlin.mongodb.App
 import io.realm.kotlin.mongodb.Credentials
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +33,7 @@ class AuthenticationViewModel : ViewModel() {
     private fun startAnimation() {
         viewModelScope.launch {
             while (true) {
-                delay(3000)
+                delay(COLOR_ANIMATION_DURATION_MILLIS.toLong())
                 currentIndex = (currentIndex + 1) % colors.size
                 currentColor = colors[currentIndex]
             }

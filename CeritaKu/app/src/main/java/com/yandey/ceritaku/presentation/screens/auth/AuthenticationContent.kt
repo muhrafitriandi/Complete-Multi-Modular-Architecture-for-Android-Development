@@ -29,6 +29,7 @@ import com.yandey.deardiary.R
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.yandey.ceritaku.util.Constants.COLOR_ANIMATION_DURATION_MILLIS
 
 @Composable
 fun AuthenticationContent(
@@ -45,7 +46,7 @@ fun AuthenticationContent(
         targetValue = targetColor,
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = 3000,
+                durationMillis = COLOR_ANIMATION_DURATION_MILLIS,
                 easing = LinearEasing
             ),
             repeatMode = RepeatMode.Reverse
