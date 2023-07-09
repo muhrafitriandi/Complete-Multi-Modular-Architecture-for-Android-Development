@@ -67,7 +67,7 @@ fun NavGraphBuilder.authenticationRoute(
                 viewModel.signInWithMongoAtlas(
                     tokenId = tokenId,
                     onSuccess = {
-                        if (it) messageBarState.addSuccess(message = context.resources.getString(R.string.message_bar_successfully_authenticated))
+                        messageBarState.addSuccess(message = context.resources.getString(R.string.message_bar_successfully_authenticated))
                         viewModel.setLoading(false)
                     },
                     onError = {
