@@ -1,6 +1,9 @@
 package com.yandey.ceritaku.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -10,7 +13,10 @@ import androidx.navigation.navArgument
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
 import com.yandey.ceritaku.presentation.screens.auth.AuthenticationScreen
+import com.yandey.ceritaku.presentation.screens.auth.AuthenticationViewModel
 import com.yandey.ceritaku.util.Constants.KEY_DIARY_ID
+import com.yandey.deardiary.R
+import java.lang.Exception
 
 @Composable
 fun NavGraph(startDestination: String, navHostController: NavHostController) {
@@ -23,15 +29,37 @@ fun NavGraph(startDestination: String, navHostController: NavHostController) {
 
 fun NavGraphBuilder.authenticationRoute() {
     composable(route = Screen.Authentication.route) {
+        val viewModel: AuthenticationViewModel = viewModel()
+        val loadingState by viewModel.loadingState
         val oneTapSignInState = rememberOneTapSignInState()
         val messageBarState = rememberMessageBarState()
+        val context = LocalContext.current
 
         AuthenticationScreen(
-            loadingState = oneTapSignInState.opened,
+            loadingState = loadingState,
             oneTapSignInState = oneTapSignInState,
             messageBarState = messageBarState,
             onButtonClicked = {
                 oneTapSignInState.open()
+                viewModel.setLoading(true)
+            },
+            onTokenIdReceived = { tokenId ->
+                viewModel.signInWithMongoAtlas(
+                    tokenId = tokenId,
+                    onSuccess = {
+                        if (it) {
+                            messageBarState.addSuccess(message = context.resources.getString(R.string.message_bar_successfully_authenticated))
+                            viewModel.setLoading(false)
+                        }
+                    },
+                    onError = {
+                        messageBarState.addError(it)
+                        viewModel.setLoading(false)
+                    }
+                )
+            },
+            onDialogDismissed = { message ->
+                messageBarState.addError(Exception(message))
             }
         )
     }
