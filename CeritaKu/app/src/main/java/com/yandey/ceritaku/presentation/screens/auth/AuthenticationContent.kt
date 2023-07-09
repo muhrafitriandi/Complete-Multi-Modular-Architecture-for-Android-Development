@@ -1,10 +1,10 @@
 package com.yandey.ceritaku.presentation.screens.auth
 
-import androidx.compose.animation.animateColor
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.keyframes
-import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +18,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -26,34 +25,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.yandey.ceritaku.presentation.components.GoogleButton
-import com.yandey.ceritaku.ui.theme.Blue
-import com.yandey.ceritaku.ui.theme.Green
-import com.yandey.ceritaku.ui.theme.Red
-import com.yandey.ceritaku.ui.theme.Yellow
 import com.yandey.deardiary.R
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun AuthenticationContent(
     loadingState: Boolean,
     onButtonClicked: () -> Unit,
 ) {
-
-    val infiniteTransition = rememberInfiniteTransition()
     val scrollState = rememberScrollState()
-    val colors = listOf(Red, Yellow, Green, Blue)
 
-    val color by infiniteTransition.animateColor(
-        initialValue = colors.first(),
-        targetValue = colors.last(),
+    val viewModel: AuthenticationViewModel = viewModel()
+
+    val targetColor by viewModel::currentColor
+
+    val color by animateColorAsState(
+        targetValue = targetColor,
         animationSpec = infiniteRepeatable(
-            animation = keyframes {
-                colors.forEachIndexed { index, color ->
-                    durationMillis = 5000 / colors.size
-                    if (index < colors.size - 1) {
-                        color at ((index / (colors.size - 1).toFloat()).toInt())
-                    }
-                }
-            },
+            animation = tween(
+                durationMillis = 3000,
+                easing = LinearEasing
+            ),
             repeatMode = RepeatMode.Reverse
         )
     )
@@ -95,12 +89,12 @@ fun AuthenticationContent(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Mengabadikan Kisahmu,",
+                    text = stringResource(id = R.string.text_slogan_1),
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize
                 )
                 Text(
-                    text = "Membebaskan Imajinasimu.",
+                    text = stringResource(id = R.string.text_slogan_2),
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize
                 )

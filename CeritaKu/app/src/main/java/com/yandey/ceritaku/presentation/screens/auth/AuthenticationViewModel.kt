@@ -1,8 +1,15 @@
 package com.yandey.ceritaku.presentation.screens.auth
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yandey.ceritaku.ui.theme.Blue
+import com.yandey.ceritaku.ui.theme.Green
+import com.yandey.ceritaku.ui.theme.Red
+import com.yandey.ceritaku.ui.theme.Yellow
 import com.yandey.ceritaku.util.Constants.APP_ID
 import io.realm.kotlin.mongodb.App
 import io.realm.kotlin.mongodb.Credentials
@@ -12,6 +19,25 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AuthenticationViewModel : ViewModel() {
+
+    private val colors = listOf(Red, Yellow, Green, Blue)
+    private var currentIndex by mutableIntStateOf(0)
+    var currentColor by mutableStateOf(colors[currentIndex])
+        private set
+
+    init {
+        startAnimation()
+    }
+
+    private fun startAnimation() {
+        viewModelScope.launch {
+            while (true) {
+                delay(3000)
+                currentIndex = (currentIndex + 1) % colors.size
+                currentColor = colors[currentIndex]
+            }
+        }
+    }
 
     var authenticated = mutableStateOf(false)
         private set
