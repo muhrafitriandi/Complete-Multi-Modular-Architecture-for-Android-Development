@@ -3,7 +3,6 @@ package com.yandey.ceritaku.presentation.components
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -33,7 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.yandey.deardiary.R
 
@@ -45,10 +43,7 @@ fun GoogleButton(
     secondaryText: String = stringResource(id = R.string.button_please_wait),
     icon: Int = R.drawable.google_logo,
     shape: Shape = Shapes().extraLarge,
-    borderColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
-    borderStrokeWidth: Dp = 1.dp,
-    progressIndicatorColor: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit,
 ) {
     var buttonText by remember { mutableStateOf(primaryText) }
@@ -62,7 +57,6 @@ fun GoogleButton(
             .clip(shape = shape)
             .clickable(enabled = !loadingState) { onClick() },
         shape = shape,
-        border = BorderStroke(width = borderStrokeWidth, color = borderColor),
         color = backgroundColor
     ) {
         Row(
@@ -86,6 +80,7 @@ fun GoogleButton(
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = buttonText,
+                color = Color.White,
                 style = TextStyle(fontSize = MaterialTheme.typography.bodyMedium.fontSize),
             )
             if (loadingState) {
@@ -93,7 +88,7 @@ fun GoogleButton(
                 CircularProgressIndicator(
                     modifier = Modifier.size(16.dp),
                     strokeWidth = 2.dp,
-                    color = progressIndicatorColor
+                    color = Color.White
                 )
             }
         }
