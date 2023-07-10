@@ -7,4 +7,8 @@
     <string name="text_slogan_1">Mengabadikan Kisahmu,</string>
     <string name="text_slogan_2">Membebaskan Imajinasimu.</string>
     <string name="text_add_story">Tambah Cerita</string>
+    <string name="text_sign_out_title">Keluar</string>
+    <string name="text_sign_out_description">Apakah anda yakin ingin keluar?</string>
+    <string name="text_yes">Ya</string>
+    <string name="text_cancel">Batal</string>
 </resources>
