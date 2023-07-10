@@ -1,15 +1,7 @@
 package com.yandey.ceritaku.navigation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
@@ -22,23 +14,27 @@ import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
 import com.yandey.ceritaku.presentation.screens.auth.AuthenticationScreen
 import com.yandey.ceritaku.presentation.screens.auth.AuthenticationViewModel
-import com.yandey.ceritaku.util.Constants.APP_ID
+import com.yandey.ceritaku.presentation.screens.home.HomeScreen
 import com.yandey.ceritaku.util.Constants.KEY_DIARY_ID
 import com.yandey.deardiary.R
-import io.realm.kotlin.mongodb.App
-import kotlinx.coroutines.launch
 import java.lang.Exception
 
 @Composable
 fun NavGraph(startDestination: String, navHostController: NavHostController) {
     NavHost(startDestination = startDestination, navController = navHostController) {
-        authenticationRoute(navigateToHome = {
-            with(navHostController) {
-                popBackStack()
-                navigate(Screen.Home.route)
+        authenticationRoute(
+            navigateToHome = {
+                with(navHostController) {
+                    popBackStack()
+                    navigate(Screen.Home.route)
+                }
             }
-        })
-        homeRoute()
+        )
+        homeRoute(
+            navigateToWrite = {
+                navHostController.navigate(Screen.Write.route)
+            }
+        )
         writeRoute()
     }
 }
@@ -85,22 +81,16 @@ fun NavGraphBuilder.authenticationRoute(
     }
 }
 
-fun NavGraphBuilder.homeRoute() {
+fun NavGraphBuilder.homeRoute(
+    navigateToWrite: () -> Unit,
+) {
     composable(route = Screen.Home.route) {
-        val scope = rememberCoroutineScope()
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Button(onClick = {
-                scope.launch {
-                    App.Companion.create(APP_ID).currentUser?.logOut()
-                }
-            }) {
-                Text(text = "Logout")
-            }
-        }
+        HomeScreen(
+            onMenuClicked = {
+
+            },
+            navigateToWrite = navigateToWrite
+        )
     }
 }
 
