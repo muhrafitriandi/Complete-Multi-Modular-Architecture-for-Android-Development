@@ -10,7 +10,7 @@ import io.realm.kotlin.types.annotations.PersistedName
 import io.realm.kotlin.types.annotations.PrimaryKey
 import org.mongodb.kbson.ObjectId
 
-class Story : RealmObject {
+open class Story : RealmObject {
     @PersistedName("_id")
     @PrimaryKey
     var id: ObjectId = ObjectId()
