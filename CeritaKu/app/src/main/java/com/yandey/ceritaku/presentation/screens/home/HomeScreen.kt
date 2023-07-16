@@ -59,7 +59,7 @@ fun HomeScreen(
                 )
             },
             content = {
-
+                HomeContent(storyNotes = mapOf(), onClick = {})
             }
         )
     }

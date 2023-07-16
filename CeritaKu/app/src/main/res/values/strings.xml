@@ -13,4 +13,6 @@
     <string name="text_cancel">Batal</string>
     <string name="show_gallery">Tampilkan Galeri</string>
     <string name="hide_gallery">Sembunyikan Galeri</string>
+    <string name="title_empty_page">Belum Ada Cerita</string>
+    <string name="description_empty_page">Tulis Sesuatu…</string>
 </resources>
