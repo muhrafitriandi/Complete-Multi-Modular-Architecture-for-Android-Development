@@ -3,6 +3,7 @@ package com.yandey.ceritaku.navigation
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,15 +27,19 @@ import com.yandey.ceritaku.presentation.screens.home.HomeScreen
 import com.yandey.ceritaku.presentation.screens.home.HomeViewModel
 import com.yandey.ceritaku.util.Constants.APP_ID
 import com.yandey.ceritaku.util.Constants.KEY_DIARY_ID
+import com.yandey.ceritaku.util.RequestState
 import com.yandey.deardiary.R
 import io.realm.kotlin.mongodb.App
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 @Composable
-fun NavGraph(startDestination: String, navHostController: NavHostController) {
+fun NavGraph(
+    startDestination: String,
+    navHostController: NavHostController,
+    onDataLoaded: () -> Unit,
+) {
     NavHost(startDestination = startDestination, navController = navHostController) {
         authenticationRoute(
             navigateToHome = {
@@ -42,7 +47,8 @@ fun NavGraph(startDestination: String, navHostController: NavHostController) {
                     popBackStack()
                     navigate(Screen.Home.route)
                 }
-            }
+            },
+            onDataLoaded = onDataLoaded
         )
         homeRoute(
             navigateToWrite = {
@@ -53,7 +59,8 @@ fun NavGraph(startDestination: String, navHostController: NavHostController) {
                     popBackStack()
                     navigate(Screen.Authentication.route)
                 }
-            }
+            },
+            onDataLoaded = onDataLoaded
         )
         writeRoute()
     }
@@ -61,6 +68,7 @@ fun NavGraph(startDestination: String, navHostController: NavHostController) {
 
 fun NavGraphBuilder.authenticationRoute(
     navigateToHome: () -> Unit,
+    onDataLoaded: () -> Unit,
 ) {
     composable(route = Screen.Authentication.route) {
         val viewModel: AuthenticationViewModel = viewModel()
@@ -69,6 +77,10 @@ fun NavGraphBuilder.authenticationRoute(
         val oneTapSignInState = rememberOneTapSignInState()
         val messageBarState = rememberMessageBarState()
         val context = LocalContext.current
+
+        LaunchedEffect(key1 = Unit) {
+            onDataLoaded()
+        }
 
         AuthenticationScreen(
             authenticated = authenticated,
@@ -104,6 +116,7 @@ fun NavGraphBuilder.authenticationRoute(
 fun NavGraphBuilder.homeRoute(
     navigateToWrite: () -> Unit,
     navigateToAuthentication: () -> Unit,
+    onDataLoaded: () -> Unit,
 ) {
     composable(route = Screen.Home.route) {
         val viewModel: HomeViewModel = viewModel()
@@ -111,6 +124,12 @@ fun NavGraphBuilder.homeRoute(
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
         var signOutDialogOpened by remember { mutableStateOf(false) }
+
+        LaunchedEffect(key1 = stories) {
+            if (stories !is RequestState.Loading) {
+                onDataLoaded()
+            }
+        }
 
         HomeScreen(
             stories = stories,
@@ -135,12 +154,13 @@ fun NavGraphBuilder.homeRoute(
             },
             onYesClicked = {
                 scope.launch(Dispatchers.IO) {
-                    val user = App.create(APP_ID).currentUser
-                    if (user != null) {
-                        user.logOut()
-                        withContext(Dispatchers.Main) {
-                            navigateToAuthentication()
-                        }
+                    try {
+                        App.create(APP_ID).currentUser?.logOut()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                    withContext(Dispatchers.Main) {
+                        navigateToAuthentication()
                     }
                 }
             }
