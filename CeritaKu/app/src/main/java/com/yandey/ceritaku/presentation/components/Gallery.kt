@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.yandey.ceritaku.util.Zero
+import com.yandey.deardiary.R
 import kotlin.math.max
 
 @Composable
@@ -63,7 +65,9 @@ fun Gallery(
                         .crossfade(true)
                         .build(),
                     contentScale = ContentScale.Crop,
-                    contentDescription = "Gallery Image"
+                    contentDescription = "Gallery Image",
+                    placeholder = painterResource(R.drawable.ic_baseline_loading_image),
+                    error = painterResource(R.drawable.ic_baseline_broken_image)
                 )
                 Spacer(modifier = Modifier.width(spaceBetween))
             }
