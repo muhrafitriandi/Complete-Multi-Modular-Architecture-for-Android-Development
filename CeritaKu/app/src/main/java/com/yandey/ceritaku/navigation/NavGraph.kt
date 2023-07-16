@@ -23,6 +23,7 @@ import com.yandey.ceritaku.presentation.components.DisplayAlertDialog
 import com.yandey.ceritaku.presentation.screens.auth.AuthenticationScreen
 import com.yandey.ceritaku.presentation.screens.auth.AuthenticationViewModel
 import com.yandey.ceritaku.presentation.screens.home.HomeScreen
+import com.yandey.ceritaku.presentation.screens.home.HomeViewModel
 import com.yandey.ceritaku.util.Constants.APP_ID
 import com.yandey.ceritaku.util.Constants.KEY_DIARY_ID
 import com.yandey.deardiary.R
@@ -105,11 +106,14 @@ fun NavGraphBuilder.homeRoute(
     navigateToAuthentication: () -> Unit,
 ) {
     composable(route = Screen.Home.route) {
+        val viewModel: HomeViewModel = viewModel()
+        val stories by viewModel.stories
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
         var signOutDialogOpened by remember { mutableStateOf(false) }
 
         HomeScreen(
+            stories = stories,
             onMenuClicked = {
                 scope.launch {
                     drawerState.open()

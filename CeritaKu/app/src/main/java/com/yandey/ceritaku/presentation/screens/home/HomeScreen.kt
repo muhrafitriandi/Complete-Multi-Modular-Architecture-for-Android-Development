@@ -3,14 +3,18 @@ package com.yandey.ceritaku.presentation.screens.home
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -21,21 +25,31 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.LayoutDirection
+import com.yandey.ceritaku.data.repository.Stories
+import com.yandey.ceritaku.util.RequestState
 import com.yandey.deardiary.R
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
+    stories: Stories,
     drawerState: DrawerState,
     onSignOutClicked: () -> Unit,
     onMenuClicked: () -> Unit,
     navigateToWrite: () -> Unit,
 ) {
+    var padding by remember { mutableStateOf(PaddingValues()) }
+
     NavigationDrawer(
         drawerState = drawerState,
         onSignOutClicked = onSignOutClicked
@@ -46,6 +60,7 @@ fun HomeScreen(
             },
             floatingActionButton = {
                 ExtendedFloatingActionButton(
+                    modifier = Modifier.padding(end = padding.calculateEndPadding(LayoutDirection.Ltr)),
                     text = {
                         Text(text = stringResource(id = R.string.text_add_story))
                     },
@@ -59,7 +74,34 @@ fun HomeScreen(
                 )
             },
             content = {
-                HomeContent(storyNotes = mapOf(), onClick = {})
+                padding = it
+                when (stories) {
+                    is RequestState.Error -> {
+                        EmptyPage(
+                            title = stringResource(id = R.string.error_title_message),
+                            description = stories.error.message.toString()
+                        )
+                    }
+
+                    is RequestState.Loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    is RequestState.Success -> {
+                        HomeContent(
+                            paddingValues = it,
+                            storyNotes = stories.data,
+                            onClick = {}
+                        )
+                    }
+
+                    else -> {}
+                }
             }
         )
     }
