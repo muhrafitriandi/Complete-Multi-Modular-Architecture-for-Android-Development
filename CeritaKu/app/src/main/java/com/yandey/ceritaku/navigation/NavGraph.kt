@@ -25,6 +25,7 @@ import com.yandey.ceritaku.presentation.screens.auth.AuthenticationScreen
 import com.yandey.ceritaku.presentation.screens.auth.AuthenticationViewModel
 import com.yandey.ceritaku.presentation.screens.home.HomeScreen
 import com.yandey.ceritaku.presentation.screens.home.HomeViewModel
+import com.yandey.ceritaku.presentation.screens.write.WriteScreen
 import com.yandey.ceritaku.util.Constants.APP_ID
 import com.yandey.ceritaku.util.Constants.KEY_DIARY_ID
 import com.yandey.ceritaku.util.RequestState
@@ -62,7 +63,13 @@ fun NavGraph(
             },
             onDataLoaded = onDataLoaded
         )
-        writeRoute()
+        writeRoute(
+            onBackPressed = {
+                with(navHostController) {
+                    popBackStack()
+                }
+            }
+        )
     }
 }
 
@@ -168,7 +175,9 @@ fun NavGraphBuilder.homeRoute(
     }
 }
 
-fun NavGraphBuilder.writeRoute() {
+fun NavGraphBuilder.writeRoute(
+    onBackPressed: () -> Unit,
+) {
     composable(
         route = Screen.Write.route, arguments = listOf(navArgument(name = KEY_DIARY_ID) {
             type = NavType.StringType
@@ -176,6 +185,10 @@ fun NavGraphBuilder.writeRoute() {
             defaultValue = null
         })
     ) {
-
+        WriteScreen(
+            selectedStory = null,
+            onBackPressed = onBackPressed,
+            onDeleteConfirmed = {}
+        )
     }
 }

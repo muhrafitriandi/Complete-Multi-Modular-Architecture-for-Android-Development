@@ -17,4 +17,7 @@
     <string name="description_empty_page">Tulis Sesuatu…</string>
     <string name="exception_message_user_not_authenticated">Pengguna belum masuk.</string>
     <string name="error_title_message">Terdapat kesalahan</string>
+    <string name="drop_down_delete">Hapus</string>
+    <string name="title_alert_dialog_delete_story">Hapus</string>
+    <string name="message_alert_dialog_delete_story">Apakah anda yakin ingin menghapus cerita `%s` secara permanen?</string>
 </resources>
