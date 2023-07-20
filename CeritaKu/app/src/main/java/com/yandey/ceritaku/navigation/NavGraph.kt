@@ -1,5 +1,7 @@
 package com.yandey.ceritaku.navigation
 
+
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.DrawerValue
@@ -29,8 +31,9 @@ import com.yandey.ceritaku.presentation.screens.auth.AuthenticationViewModel
 import com.yandey.ceritaku.presentation.screens.home.HomeScreen
 import com.yandey.ceritaku.presentation.screens.home.HomeViewModel
 import com.yandey.ceritaku.presentation.screens.write.WriteScreen
+import com.yandey.ceritaku.presentation.screens.write.WriteViewModel
 import com.yandey.ceritaku.util.Constants.APP_ID
-import com.yandey.ceritaku.util.Constants.KEY_DIARY_ID
+import com.yandey.ceritaku.util.Constants.KEY_STORY_ID
 import com.yandey.ceritaku.util.RequestState
 import com.yandey.deardiary.R
 import io.realm.kotlin.mongodb.App
@@ -64,7 +67,10 @@ fun NavGraph(
                     navigate(Screen.Authentication.route)
                 }
             },
-            onDataLoaded = onDataLoaded
+            onDataLoaded = onDataLoaded,
+            navigateToWriteWithArgs = {
+                navHostController.navigate(Screen.Write.passDiaryId(storyId = it))
+            }
         )
         writeRoute(
             onBackPressed = {
@@ -125,6 +131,7 @@ fun NavGraphBuilder.authenticationRoute(
 
 fun NavGraphBuilder.homeRoute(
     navigateToWrite: () -> Unit,
+    navigateToWriteWithArgs: (String) -> Unit,
     navigateToAuthentication: () -> Unit,
     onDataLoaded: () -> Unit,
 ) {
@@ -153,6 +160,7 @@ fun NavGraphBuilder.homeRoute(
             onSignOutClicked = {
                 signOutDialogOpened = true
             },
+            navigateToWriteWithArgs = navigateToWriteWithArgs
         )
 
         DisplayAlertDialog(
@@ -185,15 +193,22 @@ fun NavGraphBuilder.writeRoute(
 ) {
 
     composable(
-        route = Screen.Write.route, arguments = listOf(navArgument(name = KEY_DIARY_ID) {
+        route = Screen.Write.route, arguments = listOf(navArgument(name = KEY_STORY_ID) {
             type = NavType.StringType
             nullable = true
             defaultValue = null
         })
     ) {
+        val viewModel: WriteViewModel = viewModel()
+        val uiState = viewModel.uiState
         val pagerState = rememberPagerState(pageCount = {
             Mood.values().size
         })
+
+        LaunchedEffect(key1 = uiState) {
+            Log.d("TAG", "writeRoute: ${uiState.selectedDiaryId}")
+        }
+
         WriteScreen(
             selectedStory = null,
             onBackPressed = onBackPressed,
