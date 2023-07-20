@@ -1,5 +1,7 @@
 package com.yandey.ceritaku.navigation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -20,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
+import com.yandey.ceritaku.model.Mood
 import com.yandey.ceritaku.presentation.components.DisplayAlertDialog
 import com.yandey.ceritaku.presentation.screens.auth.AuthenticationScreen
 import com.yandey.ceritaku.presentation.screens.auth.AuthenticationViewModel
@@ -175,9 +178,12 @@ fun NavGraphBuilder.homeRoute(
     }
 }
 
+
+@OptIn(ExperimentalFoundationApi::class)
 fun NavGraphBuilder.writeRoute(
     onBackPressed: () -> Unit,
 ) {
+
     composable(
         route = Screen.Write.route, arguments = listOf(navArgument(name = KEY_DIARY_ID) {
             type = NavType.StringType
@@ -185,10 +191,14 @@ fun NavGraphBuilder.writeRoute(
             defaultValue = null
         })
     ) {
+        val pagerState = rememberPagerState(pageCount = {
+            Mood.values().size
+        })
         WriteScreen(
             selectedStory = null,
             onBackPressed = onBackPressed,
-            onDeleteConfirmed = {}
+            onDeleteConfirmed = {},
+            pagerState = pagerState
         )
     }
 }
