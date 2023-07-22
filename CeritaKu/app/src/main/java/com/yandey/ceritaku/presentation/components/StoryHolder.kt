@@ -67,7 +67,7 @@ fun StoryHolder(
                 interactionSource = remember {
                     MutableInteractionSource()
                 }
-            ) { onClick(story.id.toString()) }
+            ) { onClick(story.id.toHexString()) }
     ) {
         Spacer(modifier = Modifier.width(14.dp))
         Surface(

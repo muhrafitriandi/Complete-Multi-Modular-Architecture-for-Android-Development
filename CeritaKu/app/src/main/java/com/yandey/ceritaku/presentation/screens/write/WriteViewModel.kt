@@ -5,9 +5,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.yandey.ceritaku.data.repository.MongoDB
 import com.yandey.ceritaku.model.Mood
 import com.yandey.ceritaku.util.Constants.KEY_STORY_ID
 import com.yandey.ceritaku.util.Empty
+import com.yandey.ceritaku.util.RequestState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.mongodb.kbson.ObjectId
 
 class WriteViewModel(
     private val savedStateHandle: SavedStateHandle,
@@ -18,6 +24,7 @@ class WriteViewModel(
 
     init {
         getStoryIdArgument()
+        fetchSelectedStory()
     }
 
     private fun getStoryIdArgument() {
@@ -26,6 +33,33 @@ class WriteViewModel(
                 key = KEY_STORY_ID
             )
         )
+    }
+
+    private fun fetchSelectedStory() {
+        if (uiState.selectedDiaryId != null) {
+            viewModelScope.launch(Dispatchers.Main) {
+                val story = MongoDB.getSelectedStory(
+                    storyId = ObjectId.invoke(uiState.selectedDiaryId!!)
+                )
+                if (story is RequestState.Success) {
+                    setTitle(title = story.data.title)
+                    setDescription(description = story.data.description)
+                    setMood(mood = Mood.valueOf(story.data.mood))
+                }
+            }
+        }
+    }
+
+    fun setTitle(title: String) {
+        uiState = uiState.copy(title = title)
+    }
+
+    fun setDescription(description: String) {
+        uiState = uiState.copy(description = description)
+    }
+
+    private fun setMood(mood: Mood) {
+        uiState = uiState.copy(mood = mood)
     }
 }
 

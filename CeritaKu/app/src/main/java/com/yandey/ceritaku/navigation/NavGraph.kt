@@ -1,7 +1,6 @@
 package com.yandey.ceritaku.navigation
 
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.DrawerValue
@@ -205,15 +204,14 @@ fun NavGraphBuilder.writeRoute(
             Mood.values().size
         })
 
-        LaunchedEffect(key1 = uiState) {
-            Log.d("TAG", "writeRoute: ${uiState.selectedDiaryId}")
-        }
-
         WriteScreen(
+            uiState = uiState,
             selectedStory = null,
             onBackPressed = onBackPressed,
             onDeleteConfirmed = {},
-            pagerState = pagerState
+            pagerState = pagerState,
+            onTitleChanged = { viewModel.setTitle(title = it) },
+            onDescriptionChanged = { viewModel.setDescription(description = it) }
         )
     }
 }

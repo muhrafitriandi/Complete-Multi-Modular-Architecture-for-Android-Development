@@ -15,6 +15,7 @@ import io.realm.kotlin.query.Sort
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import org.mongodb.kbson.ObjectId
 import java.time.ZoneId
 
 object MongoDB : MongoRepository {
@@ -68,6 +69,19 @@ object MongoDB : MongoRepository {
             flow {
                 emit(RequestState.Error(UserNotAuthenticatedException()))
             }
+        }
+    }
+
+    override fun getSelectedStory(storyId: ObjectId): RequestState<Story> {
+        return if (user != null) {
+            try {
+                val story = realm.query<Story>(query = "_id == $0", storyId).find().first()
+                RequestState.Success(data = story)
+            } catch (e: Exception) {
+                RequestState.Error(e)
+            }
+        } else {
+            RequestState.Error(UserNotAuthenticatedException())
         }
     }
 }
