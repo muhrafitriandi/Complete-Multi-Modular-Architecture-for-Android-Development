@@ -7,6 +7,7 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -203,15 +204,20 @@ fun NavGraphBuilder.writeRoute(
         val pagerState = rememberPagerState(pageCount = {
             Mood.values().size
         })
+        val pageNumber by remember {
+            derivedStateOf {
+                pagerState.currentPage
+            }
+        }
 
         WriteScreen(
             uiState = uiState,
-            selectedStory = null,
             onBackPressed = onBackPressed,
             onDeleteConfirmed = {},
             pagerState = pagerState,
             onTitleChanged = { viewModel.setTitle(title = it) },
-            onDescriptionChanged = { viewModel.setDescription(description = it) }
+            onDescriptionChanged = { viewModel.setDescription(description = it) },
+            moodName = { Mood.values()[pageNumber].name }
         )
     }
 }

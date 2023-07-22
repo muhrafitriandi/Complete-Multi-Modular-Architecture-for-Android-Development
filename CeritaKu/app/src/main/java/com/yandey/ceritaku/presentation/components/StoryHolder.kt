@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.yandey.ceritaku.model.Mood
 import com.yandey.ceritaku.model.Story
 import com.yandey.ceritaku.ui.theme.Elevation
+import com.yandey.ceritaku.util.Constants.TIME_FORMAT
 import com.yandey.ceritaku.util.toInstant
 import com.yandey.deardiary.R
 import io.realm.kotlin.ext.realmListOf
@@ -146,7 +147,7 @@ fun StoryHeader(moodName: String, time: Instant) {
             )
         }
         Text(
-            text = SimpleDateFormat("hh:mm a", Locale.US).format(Date.from(time)),
+            text = SimpleDateFormat(TIME_FORMAT, Locale.US).format(Date.from(time)),
             color = mood.contentColor,
             style = TextStyle(fontSize = MaterialTheme.typography.bodyMedium.fontSize)
         )

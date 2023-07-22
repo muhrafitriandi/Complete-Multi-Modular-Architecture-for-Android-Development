@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.yandey.ceritaku.model.Story
 import com.yandey.ceritaku.presentation.components.StoryHolder
+import com.yandey.ceritaku.util.Constants.DAY_OF_MONTH_TWO_DIGIT_FORMAT
 import com.yandey.deardiary.R
 import java.time.LocalDate
 
@@ -81,7 +82,7 @@ fun DateHeader(localDate: LocalDate) {
             horizontalAlignment = Alignment.End
         ) {
             Text(
-                text = String.format("%02d", localDate.dayOfMonth),
+                text = String.format(DAY_OF_MONTH_TWO_DIGIT_FORMAT, localDate.dayOfMonth),
                 style = TextStyle(
                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                     fontWeight = FontWeight.Light

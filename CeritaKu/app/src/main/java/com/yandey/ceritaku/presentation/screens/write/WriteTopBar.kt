@@ -15,9 +15,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,15 +28,63 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.yandey.ceritaku.model.Story
 import com.yandey.ceritaku.presentation.components.DisplayAlertDialog
+import com.yandey.ceritaku.util.Constants.DATE_FORMAT
+import com.yandey.ceritaku.util.Constants.DATE_TIME_FORMAT
+import com.yandey.ceritaku.util.Constants.TIME_FORMAT
+import com.yandey.ceritaku.util.calculateTimeUntilNextMinute
+import com.yandey.ceritaku.util.toInstant
 import com.yandey.deardiary.R
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WriteTopBar(
     selectedStory: Story?,
+    moodName: () -> String,
     onBackPressed: () -> Unit,
     onDeleteConfirmed: () -> Unit,
 ) {
+    var currentDate by remember { mutableStateOf(LocalDate.now()) }
+    var currentTime by remember { mutableStateOf(LocalTime.now()) }
+
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(Unit) {
+        scope.launch {
+            while (true) {
+                val timeUntilNextMinute = calculateTimeUntilNextMinute()
+                delay(timeUntilNextMinute)
+                currentDate = LocalDate.now()
+                currentTime = LocalTime.now()
+            }
+        }
+    }
+
+    val formattedDate = remember(key1 = currentDate) {
+        DateTimeFormatter
+            .ofPattern(DATE_FORMAT)
+            .format(currentDate).uppercase()
+    }
+    val formattedTime = remember(key1 = currentTime) {
+        DateTimeFormatter
+            .ofPattern(TIME_FORMAT)
+            .format(currentTime)
+    }
+    val selectedStoryDateTime = remember(currentDate, currentTime, selectedStory) {
+        if (selectedStory != null) {
+            SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
+                .format(Date.from(selectedStory.date.toInstant())).uppercase()
+        } else {
+            "$formattedDate, $formattedTime"
+        }
+    }
+
     CenterAlignedTopAppBar(
         navigationIcon = {
             IconButton(onClick = onBackPressed) {
@@ -49,7 +99,7 @@ fun WriteTopBar(
             Column {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Happy",
+                    text = moodName(),
                     style = TextStyle(
                         fontSize = MaterialTheme.typography.titleLarge.fontSize,
                         fontWeight = FontWeight.Bold
@@ -58,7 +108,7 @@ fun WriteTopBar(
                 )
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "18 JUL 2023, 08:25 AM",
+                    text = selectedStoryDateTime,
                     style = TextStyle(fontSize = MaterialTheme.typography.bodySmall.fontSize),
                     textAlign = TextAlign.Center
                 )

@@ -7,15 +7,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.yandey.ceritaku.model.Mood
-import com.yandey.ceritaku.model.Story
 
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun WriteScreen(
     uiState: UiState,
-    selectedStory: Story?,
     pagerState: PagerState,
+    moodName: () -> String,
     onTitleChanged: (String) -> Unit,
     onDescriptionChanged: (String) -> Unit,
     onBackPressed: () -> Unit,
@@ -28,9 +27,10 @@ fun WriteScreen(
     Scaffold(
         topBar = {
             WriteTopBar(
-                selectedStory = selectedStory,
+                selectedStory = uiState.selectedStory,
                 onBackPressed = onBackPressed,
-                onDeleteConfirmed = onDeleteConfirmed
+                onDeleteConfirmed = onDeleteConfirmed,
+                moodName = moodName
             )
         },
         content = {
