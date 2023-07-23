@@ -1,5 +1,6 @@
 package com.yandey.ceritaku.data.repository
 
+import android.content.Context
 import android.content.res.Resources
 import com.yandey.ceritaku.model.Story
 import com.yandey.ceritaku.util.Constants.APP_ID
@@ -98,6 +99,30 @@ object MongoDB : MongoRepository {
                     RequestState.Success(data = addedStory)
                 } catch (e: Exception) {
                     RequestState.Error(e)
+                }
+            }
+        } else {
+            RequestState.Error(UserNotAuthenticatedException())
+        }
+    }
+
+    override suspend fun updateStory(story: Story, context: Context): RequestState<Story> {
+        return if (user != null) {
+            realm.write {
+                val queriedStory = query<Story>(query = "_id == $0", story.id).first().find()
+                if (queriedStory != null) {
+                    queriedStory.title = story.title
+                    queriedStory.description = story.description
+                    queriedStory.date = story.date
+                    queriedStory.mood = story.mood
+                    queriedStory.images = story.images
+                    RequestState.Success(data = queriedStory)
+                } else {
+                    RequestState.Error(
+                        Exception(
+                            context.getString(R.string.exception_message_update_story)
+                        )
+                    )
                 }
             }
         } else {

@@ -4,6 +4,7 @@
     <string name="button_sign_in_with_google">Masuk dengan Google</string>
     <string name="button_please_wait">Harap tunggu…</string>
     <string name="button_save">Simpan</string>
+    <string name="button_update">Perbarui</string>
     <string name="message_bar_successfully_authenticated">Autentikasi Berhasil!</string>
     <string name="text_slogan_1">Mengabadikan Kisahmu,</string>
     <string name="text_slogan_2">Membebaskan Imajinasimu.</string>
@@ -17,6 +18,7 @@
     <string name="title_empty_page">Belum Ada Cerita</string>
     <string name="description_empty_page">Tulis Sesuatu…</string>
     <string name="exception_message_user_not_authenticated">Pengguna belum masuk.</string>
+    <string name="exception_message_update_story">Cerita yang dicari tidak ada.</string>
     <string name="error_title_message">Terdapat kesalahan</string>
     <string name="drop_down_delete">Hapus</string>
     <string name="title_alert_dialog_delete_story">Hapus</string>
@@ -24,6 +26,7 @@
     <string name="title">Judul</string>
     <string name="description">Deskripsi</string>
     <string name="message_bar_successfully_added_story">Berhasil menambahkan cerita!</string>
+    <string name="message_bar_successfully_updated_story">Berhasil memperbarui cerita!</string>
     <string name="message_bar_error_added_story">Berhasil menambahkan cerita!</string>
     <string name="message_bar_error_title_added_story">Judul tidak boleh kosong!</string>
     <string name="message_bar_error_description_added_story">Deskripsi tidak boleh kosong!</string>

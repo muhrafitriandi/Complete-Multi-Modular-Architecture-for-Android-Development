@@ -1,5 +1,6 @@
 package com.yandey.ceritaku.data.repository
 
+import android.content.Context
 import com.yandey.ceritaku.model.Story
 import com.yandey.ceritaku.util.RequestState
 import kotlinx.coroutines.flow.Flow
@@ -13,4 +14,5 @@ interface MongoRepository {
     fun getAllStories(): Flow<Stories>
     fun getSelectedStory(storyId: ObjectId): Flow<RequestState<Story>>
     suspend fun insertStory(story: Story): RequestState<Story>
+    suspend fun updateStory(story: Story, context: Context): RequestState<Story>
 }

@@ -160,7 +160,12 @@ fun WriteContent(
                     .height(54.dp),
                 shape = Shapes().extraLarge
             ) {
-                Text(text = stringResource(id = R.string.button_save))
+                val buttonText = if (uiState.selectedStoryId != null) {
+                    stringResource(id = R.string.button_update)
+                } else {
+                    stringResource(id = R.string.button_save)
+                }
+                Text(text = buttonText)
             }
         }
     }

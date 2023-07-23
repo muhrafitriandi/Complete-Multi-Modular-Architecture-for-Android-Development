@@ -223,20 +223,21 @@ fun NavGraphBuilder.writeRoute(
             onDescriptionChanged = { viewModel.setDescription(description = it) },
             moodName = { Mood.values()[pageNumber].getLocalizedMood(context) },
             onSaveClicked = {
-                viewModel.insertStory(
+                viewModel.upsertStory(
                     story = it.apply {
                         this.mood = Mood.values()[pageNumber].name
                     },
-                    onSuccess = {
+                    onSuccess = { successMessage ->
                         scope.launch {
-                            messageBarState.addSuccess(message = context.resources.getString(R.string.message_bar_successfully_added_story))
+                            messageBarState.addSuccess(message = successMessage)
                             delay(1000)
                             onBackPressed()
                         }
                     },
-                    onError = { message ->
-                        messageBarState.addError(Exception(message))
-                    }
+                    onError = { errorMessage ->
+                        messageBarState.addError(Exception(errorMessage))
+                    },
+                    context = context
                 )
             },
             messageBarState = messageBarState,

@@ -1,5 +1,6 @@
 package com.yandey.ceritaku.presentation.screens.write
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +13,7 @@ import com.yandey.ceritaku.model.Story
 import com.yandey.ceritaku.util.Constants.KEY_STORY_ID
 import com.yandey.ceritaku.util.Empty
 import com.yandey.ceritaku.util.RequestState
+import com.yandey.deardiary.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -54,21 +56,69 @@ class WriteViewModel(
         }
     }
 
-    fun insertStory(
+    private suspend fun insertStory(
         story: Story,
-        onSuccess: () -> Unit,
+        context: Context,
+        onSuccess: (String) -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        val data = MongoDB.insertStory(story = story)
+        if (data is RequestState.Success) {
+            withContext(Dispatchers.Main) {
+                onSuccess(context.getString(R.string.message_bar_successfully_added_story))
+            }
+        } else if (data is RequestState.Error) {
+            withContext(Dispatchers.Main) {
+                onError(data.error.message.toString())
+            }
+        }
+    }
+
+    private suspend fun updateStory(
+        story: Story,
+        context: Context,
+        onSuccess: (String) -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        val data = MongoDB.updateStory(
+            story = story.apply {
+                id = ObjectId.invoke(uiState.selectedStoryId!!)
+                date = uiState.selectedStory!!.date
+            },
+            context = context
+        )
+        if (data is RequestState.Success) {
+            withContext(Dispatchers.Main) {
+                onSuccess(context.getString(R.string.message_bar_successfully_updated_story))
+            }
+        } else if (data is RequestState.Error) {
+            withContext(Dispatchers.Main) {
+                onError(data.error.message.toString())
+            }
+        }
+    }
+
+    fun upsertStory(
+        story: Story,
+        context: Context,
+        onSuccess: (String) -> Unit,
         onError: (String) -> Unit,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            val data = MongoDB.insertStory(story = story)
-            if (data is RequestState.Success) {
-                withContext(Dispatchers.Main) {
-                    onSuccess()
-                }
-            } else if (data is RequestState.Error) {
-                withContext(Dispatchers.Main) {
-                    onError(data.error.message.toString())
-                }
+            if (uiState.selectedStoryId != null) {
+                updateStory(
+                    story = story,
+                    context = context,
+                    onSuccess = onSuccess,
+                    onError = onError
+                )
+            } else {
+                insertStory(
+                    story = story,
+                    context = context,
+                    onSuccess = onSuccess,
+                    onError = onError
+                )
             }
         }
     }
