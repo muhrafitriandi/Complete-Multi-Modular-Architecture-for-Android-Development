@@ -2,18 +2,12 @@ package com.yandey.ceritaku.presentation.screens.write
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
-import com.stevdzasan.messagebar.ContentWithMessageBar
-import com.stevdzasan.messagebar.MessageBarPosition
-import com.stevdzasan.messagebar.MessageBarState
 import com.yandey.ceritaku.model.Mood
 import com.yandey.ceritaku.model.Story
 
@@ -21,7 +15,7 @@ import com.yandey.ceritaku.model.Story
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun WriteScreen(
-    messageBarState: MessageBarState,
+    hostState: SnackbarHostState,
     uiState: UiState,
     pagerState: PagerState,
     moodName: () -> String,
@@ -37,27 +31,19 @@ fun WriteScreen(
     }
 
     Scaffold(
-        modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.surface)
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        snackbarHost = { SnackbarHost(hostState = hostState) },
         content = {
-            ContentWithMessageBar(
-                messageBarState = messageBarState,
-                position = MessageBarPosition.BOTTOM
-            ) {
-                WriteContent(
-                    uiState = uiState,
-                    paddingValues = it,
-                    title = uiState.title,
-                    onTitleChanged = onTitleChanged,
-                    description = uiState.description,
-                    onDescriptionChanged = onDescriptionChanged,
-                    pagerState = pagerState,
-                    onSaveClicked = onSaveClicked,
-                    onFieldError = onFieldError
-                )
-            }
+            WriteContent(
+                uiState = uiState,
+                paddingValues = it,
+                title = uiState.title,
+                onTitleChanged = onTitleChanged,
+                description = uiState.description,
+                onDescriptionChanged = onDescriptionChanged,
+                pagerState = pagerState,
+                onSaveClicked = onSaveClicked,
+                onFieldError = onFieldError
+            )
         },
         topBar = {
             WriteTopBar(

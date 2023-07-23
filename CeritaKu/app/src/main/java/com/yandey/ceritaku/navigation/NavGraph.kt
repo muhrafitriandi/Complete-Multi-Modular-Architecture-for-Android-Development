@@ -1,9 +1,9 @@
 package com.yandey.ceritaku.navigation
 
-
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,7 +38,6 @@ import com.yandey.ceritaku.util.RequestState
 import com.yandey.deardiary.R
 import io.realm.kotlin.mongodb.App
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -200,7 +199,7 @@ fun NavGraphBuilder.writeRoute(
             defaultValue = null
         })
     ) {
-        val messageBarState = rememberMessageBarState()
+        val hostState = remember { SnackbarHostState() }
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
         val viewModel: WriteViewModel = viewModel()
@@ -213,9 +212,9 @@ fun NavGraphBuilder.writeRoute(
                 pagerState.currentPage
             }
         }
-
         WriteScreen(
             uiState = uiState,
+            hostState = hostState,
             onBackPressed = onBackPressed,
             onDeleteConfirmed = {},
             pagerState = pagerState,
@@ -227,22 +226,21 @@ fun NavGraphBuilder.writeRoute(
                     story = it.apply {
                         this.mood = Mood.values()[pageNumber].name
                     },
-                    onSuccess = { successMessage ->
-                        scope.launch {
-                            messageBarState.addSuccess(message = successMessage)
-                            delay(1000)
-                            onBackPressed()
-                        }
+                    onSuccess = {
+                        onBackPressed()
                     },
                     onError = { errorMessage ->
-                        messageBarState.addError(Exception(errorMessage))
+                        scope.launch {
+                            hostState.showSnackbar(message = errorMessage, withDismissAction = true)
+                        }
                     },
                     context = context
                 )
             },
-            messageBarState = messageBarState,
             onFieldError = {
-                messageBarState.addError(Exception(it))
+                scope.launch {
+                    hostState.showSnackbar(message = it, withDismissAction = true)
+                }
             }
         )
     }
