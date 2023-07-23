@@ -11,6 +11,6 @@ typealias Stories = RequestState<Map<LocalDate, List<Story>>>
 interface MongoRepository {
     fun configureTheRealm()
     fun getAllStories(): Flow<Stories>
-    fun getSelectedStory(storyId: ObjectId): RequestState<Story>
-    suspend fun addNewStory(story: Story): RequestState<Story>
+    fun getSelectedStory(storyId: ObjectId): Flow<RequestState<Story>>
+    suspend fun insertStory(story: Story): RequestState<Story>
 }

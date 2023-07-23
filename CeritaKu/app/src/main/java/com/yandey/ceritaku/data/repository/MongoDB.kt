@@ -72,20 +72,25 @@ object MongoDB : MongoRepository {
         }
     }
 
-    override fun getSelectedStory(storyId: ObjectId): RequestState<Story> {
+    override fun getSelectedStory(storyId: ObjectId): Flow<RequestState<Story>> {
         return if (user != null) {
             try {
-                val story = realm.query<Story>(query = "_id == $0", storyId).find().first()
-                RequestState.Success(data = story)
+                realm.query<Story>(query = "_id == $0", storyId).asFlow().map { story ->
+                    RequestState.Success(data = story.list.first())
+                }
             } catch (e: Exception) {
-                RequestState.Error(e)
+                flow {
+                    emit(RequestState.Error(e))
+                }
             }
         } else {
-            RequestState.Error(UserNotAuthenticatedException())
+            flow {
+                emit(RequestState.Error(UserNotAuthenticatedException()))
+            }
         }
     }
 
-    override suspend fun addNewStory(story: Story): RequestState<Story> {
+    override suspend fun insertStory(story: Story): RequestState<Story> {
         return if (user != null) {
             realm.write {
                 try {

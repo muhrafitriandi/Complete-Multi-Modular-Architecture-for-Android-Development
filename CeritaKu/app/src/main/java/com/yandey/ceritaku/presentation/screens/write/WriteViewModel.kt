@@ -40,14 +40,15 @@ class WriteViewModel(
     private fun fetchSelectedStory() {
         if (uiState.selectedStoryId != null) {
             viewModelScope.launch(Dispatchers.Main) {
-                val story = MongoDB.getSelectedStory(
+                MongoDB.getSelectedStory(
                     storyId = ObjectId.invoke(uiState.selectedStoryId!!)
-                )
-                if (story is RequestState.Success) {
-                    setSelectedStory(story = story.data)
-                    setTitle(title = story.data.title)
-                    setDescription(description = story.data.description)
-                    setMood(mood = Mood.valueOf(story.data.mood))
+                ).collect { story ->
+                    if (story is RequestState.Success) {
+                        setSelectedStory(story = story.data)
+                        setTitle(title = story.data.title)
+                        setDescription(description = story.data.description)
+                        setMood(mood = Mood.valueOf(story.data.mood))
+                    }
                 }
             }
         }
@@ -59,7 +60,7 @@ class WriteViewModel(
         onError: (String) -> Unit,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            val data = MongoDB.addNewStory(story = story)
+            val data = MongoDB.insertStory(story = story)
             if (data is RequestState.Success) {
                 withContext(Dispatchers.Main) {
                     onSuccess()
