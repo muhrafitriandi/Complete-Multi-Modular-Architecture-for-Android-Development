@@ -14,6 +14,7 @@ import com.yandey.ceritaku.util.Empty
 import com.yandey.ceritaku.util.RequestState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.mongodb.kbson.ObjectId
 
 class WriteViewModel(
@@ -47,6 +48,25 @@ class WriteViewModel(
                     setTitle(title = story.data.title)
                     setDescription(description = story.data.description)
                     setMood(mood = Mood.valueOf(story.data.mood))
+                }
+            }
+        }
+    }
+
+    fun insertStory(
+        story: Story,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val data = MongoDB.addNewStory(story = story)
+            if (data is RequestState.Success) {
+                withContext(Dispatchers.Main) {
+                    onSuccess()
+                }
+            } else if (data is RequestState.Error) {
+                withContext(Dispatchers.Main) {
+                    onError(data.error.message.toString())
                 }
             }
         }

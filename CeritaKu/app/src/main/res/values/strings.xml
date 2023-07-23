@@ -23,6 +23,10 @@
     <string name="message_alert_dialog_delete_story">Apakah anda yakin ingin menghapus cerita `%s` secara permanen?</string>
     <string name="title">Judul</string>
     <string name="description">Deskripsi</string>
+    <string name="message_bar_successfully_added_story">Berhasil menambahkan cerita!</string>
+    <string name="message_bar_error_added_story">Berhasil menambahkan cerita!</string>
+    <string name="message_bar_error_title_added_story">Judul tidak boleh kosong!</string>
+    <string name="message_bar_error_description_added_story">Deskripsi tidak boleh kosong!</string>
 
     <string name="mood_neutral">Netral</string>
     <string name="mood_happy">Senang</string>

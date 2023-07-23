@@ -38,6 +38,7 @@ import com.yandey.ceritaku.util.RequestState
 import com.yandey.deardiary.R
 import io.realm.kotlin.mongodb.App
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -199,6 +200,8 @@ fun NavGraphBuilder.writeRoute(
             defaultValue = null
         })
     ) {
+        val messageBarState = rememberMessageBarState()
+        val scope = rememberCoroutineScope()
         val context = LocalContext.current
         val viewModel: WriteViewModel = viewModel()
         val uiState = viewModel.uiState
@@ -218,7 +221,28 @@ fun NavGraphBuilder.writeRoute(
             pagerState = pagerState,
             onTitleChanged = { viewModel.setTitle(title = it) },
             onDescriptionChanged = { viewModel.setDescription(description = it) },
-            moodName = { Mood.values()[pageNumber].getLocalizedMood(context) }
+            moodName = { Mood.values()[pageNumber].getLocalizedMood(context) },
+            onSaveClicked = {
+                viewModel.insertStory(
+                    story = it.apply {
+                        this.mood = Mood.values()[pageNumber].name
+                    },
+                    onSuccess = {
+                        scope.launch {
+                            messageBarState.addSuccess(message = context.resources.getString(R.string.message_bar_successfully_added_story))
+                            delay(1000)
+                            onBackPressed()
+                        }
+                    },
+                    onError = { message ->
+                        messageBarState.addError(Exception(message))
+                    }
+                )
+            },
+            messageBarState = messageBarState,
+            onFieldError = {
+                messageBarState.addError(Exception(it))
+            }
         )
     }
 }

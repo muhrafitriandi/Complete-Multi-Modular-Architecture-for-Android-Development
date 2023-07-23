@@ -12,4 +12,5 @@ interface MongoRepository {
     fun configureTheRealm()
     fun getAllStories(): Flow<Stories>
     fun getSelectedStory(storyId: ObjectId): RequestState<Story>
+    suspend fun addNewStory(story: Story): RequestState<Story>
 }

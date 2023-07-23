@@ -1,7 +1,7 @@
 package com.yandey.ceritaku.model
 
 import com.yandey.ceritaku.util.Empty
-import com.yandey.ceritaku.util.Zero
+import com.yandey.ceritaku.util.toRealmInstant
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmList
@@ -9,6 +9,7 @@ import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PersistedName
 import io.realm.kotlin.types.annotations.PrimaryKey
 import org.mongodb.kbson.ObjectId
+import java.time.Instant
 
 open class Story : RealmObject {
     @PersistedName("_id")
@@ -25,5 +26,5 @@ open class Story : RealmObject {
 
     var images: RealmList<String> = realmListOf()
 
-    var date: RealmInstant = RealmInstant.from(System.currentTimeMillis(), Int.Zero)
+    var date: RealmInstant = Instant.now().toRealmInstant()
 }

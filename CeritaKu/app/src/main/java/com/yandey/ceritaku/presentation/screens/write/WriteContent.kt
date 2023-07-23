@@ -34,20 +34,25 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.yandey.ceritaku.model.Mood
+import com.yandey.ceritaku.model.Story
 import com.yandey.deardiary.R
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WriteContent(
+    uiState: UiState,
     paddingValues: PaddingValues,
     title: String,
     onTitleChanged: (String) -> Unit,
     description: String,
     onDescriptionChanged: (String) -> Unit,
     pagerState: PagerState,
+    onSaveClicked: (Story) -> Unit,
+    onFieldError: (String) -> Unit,
 ) {
     val scrollState = rememberScrollState()
-
+    val titleError = stringResource(id = R.string.message_bar_error_title_added_story)
+    val descriptionError = stringResource(id = R.string.message_bar_error_description_added_story)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -136,7 +141,20 @@ fun WriteContent(
         ) {
             Spacer(modifier = Modifier.height(12.dp))
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    if (uiState.title.isNotEmpty()) {
+                        if (uiState.description.isNotEmpty()) {
+                            onSaveClicked(Story().apply {
+                                this.title = uiState.title
+                                this.description = uiState.description
+                            })
+                        } else {
+                            onFieldError(descriptionError)
+                        }
+                    } else {
+                        onFieldError(titleError)
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(54.dp),
@@ -156,11 +174,14 @@ fun WriteContentPreview() {
         Mood.values().size
     })
     WriteContent(
+        uiState = UiState(),
         paddingValues = PaddingValues(),
         title = "",
         onTitleChanged = {},
         description = "",
         onDescriptionChanged = {},
-        pagerState = pagerState
+        pagerState = pagerState,
+        onSaveClicked = {},
+        onFieldError = {}
     )
 }
