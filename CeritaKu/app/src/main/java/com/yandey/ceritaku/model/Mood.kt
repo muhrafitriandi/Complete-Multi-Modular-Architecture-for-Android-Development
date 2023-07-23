@@ -1,5 +1,6 @@
 package com.yandey.ceritaku.model
 
+import android.content.Context
 import androidx.compose.ui.graphics.Color
 import com.yandey.ceritaku.ui.theme.AngryColor
 import com.yandey.ceritaku.ui.theme.AwfulColor
@@ -103,5 +104,27 @@ enum class Mood(
         icon = R.drawable.bored,
         contentColor = Color.Black,
         containerColor = BoredColor
-    )
+    );
+
+    fun <T : Context> getLocalizedMood(context: T): String {
+        val resId = when (this) {
+            Neutral -> R.string.mood_neutral
+            Happy -> R.string.mood_happy
+            Romantic -> R.string.mood_romantic
+            Calm -> R.string.mood_calm
+            Tense -> R.string.mood_tense
+            Lonely -> R.string.mood_lonely
+            Mysterious -> R.string.mood_mysterious
+            Angry -> R.string.mood_angry
+            Awful -> R.string.mood_awful
+            Surprised -> R.string.mood_surprised
+            Depressed -> R.string.mood_depressed
+            Disappointed -> R.string.mood_disappointed
+            Shameful -> R.string.mood_shameful
+            Humorous -> R.string.mood_humorous
+            Suspicious -> R.string.mood_suspicious
+            Bored -> R.string.mood_bored
+        }
+        return context.getString(resId)
+    }
 }

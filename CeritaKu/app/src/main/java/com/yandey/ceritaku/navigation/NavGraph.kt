@@ -199,6 +199,7 @@ fun NavGraphBuilder.writeRoute(
             defaultValue = null
         })
     ) {
+        val context = LocalContext.current
         val viewModel: WriteViewModel = viewModel()
         val uiState = viewModel.uiState
         val pagerState = rememberPagerState(pageCount = {
@@ -217,7 +218,7 @@ fun NavGraphBuilder.writeRoute(
             pagerState = pagerState,
             onTitleChanged = { viewModel.setTitle(title = it) },
             onDescriptionChanged = { viewModel.setDescription(description = it) },
-            moodName = { Mood.values()[pageNumber].name }
+            moodName = { Mood.values()[pageNumber].getLocalizedMood(context) }
         )
     }
 }

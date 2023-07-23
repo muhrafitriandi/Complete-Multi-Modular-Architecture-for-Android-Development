@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -124,6 +125,7 @@ fun StoryHolder(
 @Composable
 fun StoryHeader(moodName: String, time: Instant) {
     val mood by remember { mutableStateOf(Mood.valueOf(moodName)) }
+    val context = LocalContext.current
 
     Row(
         modifier = Modifier
@@ -141,7 +143,7 @@ fun StoryHeader(moodName: String, time: Instant) {
             )
             Spacer(modifier = Modifier.width(7.dp))
             Text(
-                text = mood.name,
+                text = mood.getLocalizedMood(context),
                 color = mood.contentColor,
                 style = TextStyle(fontSize = MaterialTheme.typography.bodyMedium.fontSize)
             )

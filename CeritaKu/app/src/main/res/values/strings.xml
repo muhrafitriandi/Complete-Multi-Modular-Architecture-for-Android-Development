@@ -23,4 +23,21 @@
     <string name="message_alert_dialog_delete_story">Apakah anda yakin ingin menghapus cerita `%s` secara permanen?</string>
     <string name="title">Judul</string>
     <string name="description">Deskripsi</string>
+
+    <string name="mood_neutral">Netral</string>
+    <string name="mood_happy">Senang</string>
+    <string name="mood_romantic">Romantis</string>
+    <string name="mood_calm">Tenang</string>
+    <string name="mood_tense">Tegang</string>
+    <string name="mood_lonely">Sendirian</string>
+    <string name="mood_mysterious">Misterius</string>
+    <string name="mood_angry">Marah</string>
+    <string name="mood_awful">Mengerikan</string>
+    <string name="mood_surprised">Terkejut</string>
+    <string name="mood_depressed">Depresi</string>
+    <string name="mood_disappointed">Kecewa</string>
+    <string name="mood_shameful">Malu</string>
+    <string name="mood_humorous">Humoris</string>
+    <string name="mood_suspicious">Curiga</string>
+    <string name="mood_bored">Bosan</string>
 </resources>
