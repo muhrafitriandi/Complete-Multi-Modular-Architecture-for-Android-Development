@@ -10,7 +10,7 @@ object Constants {
     const val CONTENT_ANIMATION_DURATION_MILLIS = 300
 
     const val DAY_OF_MONTH_TWO_DIGIT_FORMAT = "%02d"
-    const val TIME_FORMAT = "hh:mm a"
+    const val TIME_FORMAT = "HH:mm a"
     const val DATE_FORMAT = "dd MMM yyyy"
-    const val DATE_TIME_FORMAT = "dd MMM yyyy, hh:mm a"
+    const val DATE_TIME_FORMAT = "dd MMM yyyy, HH:mm a"
 }
