@@ -231,7 +231,10 @@ fun NavGraphBuilder.writeRoute(
                     },
                     onError = { errorMessage ->
                         scope.launch {
-                            hostState.showSnackbar(message = errorMessage, withDismissAction = true)
+                            with(hostState) {
+                                currentSnackbarData?.dismiss()
+                                showSnackbar(message = errorMessage, withDismissAction = true)
+                            }
                         }
                     },
                     context = context
@@ -239,7 +242,10 @@ fun NavGraphBuilder.writeRoute(
             },
             onFieldError = {
                 scope.launch {
-                    hostState.showSnackbar(message = it, withDismissAction = true)
+                    with(hostState) {
+                        currentSnackbarData?.dismiss()
+                        showSnackbar(message = it, withDismissAction = true)
+                    }
                 }
             }
         )
