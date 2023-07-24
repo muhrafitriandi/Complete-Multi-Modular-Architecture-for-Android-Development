@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -26,6 +27,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
+import com.maxkeppeler.sheets.calendar.CalendarDialog
+import com.maxkeppeler.sheets.calendar.models.CalendarConfig
+import com.maxkeppeler.sheets.calendar.models.CalendarSelection
+import com.maxkeppeler.sheets.clock.ClockDialog
+import com.maxkeppeler.sheets.clock.models.ClockConfig
+import com.maxkeppeler.sheets.clock.models.ClockSelection
 import com.yandey.ceritaku.model.Story
 import com.yandey.ceritaku.presentation.components.DisplayAlertDialog
 import com.yandey.ceritaku.util.Constants.DATE_FORMAT
@@ -39,6 +47,8 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
@@ -50,18 +60,22 @@ fun WriteTopBar(
     moodName: () -> String,
     onBackPressed: () -> Unit,
     onDeleteConfirmed: () -> Unit,
+    onDateTimeUpdated: (ZonedDateTime) -> Unit,
 ) {
+    var dateTimeUpdated by remember { mutableStateOf(false) }
+    val dateDialog = rememberUseCaseState()
+    val timeDialog = rememberUseCaseState()
     var currentDate by remember { mutableStateOf(LocalDate.now()) }
     var currentTime by remember { mutableStateOf(LocalTime.now()) }
 
     val scope = rememberCoroutineScope()
-    LaunchedEffect(Unit) {
+    LaunchedEffect(dateTimeUpdated) {
         scope.launch {
-            while (true) {
+            while (!dateTimeUpdated) {
                 val timeUntilNextMinute = calculateTimeUntilNextMinute()
-                delay(timeUntilNextMinute)
                 currentDate = LocalDate.now()
                 currentTime = LocalTime.now()
+                delay(timeUntilNextMinute)
             }
         }
     }
@@ -77,7 +91,9 @@ fun WriteTopBar(
             .format(currentTime)
     }
     val selectedStoryDateTime = remember(currentDate, currentTime, selectedStory) {
-        if (selectedStory != null) {
+        if (selectedStory != null && dateTimeUpdated) {
+            "$formattedDate, $formattedTime"
+        } else if (selectedStory != null) {
             SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault())
                 .format(Date.from(selectedStory.date.toInstant())).uppercase()
         } else {
@@ -115,12 +131,28 @@ fun WriteTopBar(
             }
         },
         actions = {
-            IconButton(onClick = {}) {
-                Icon(
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = "Date Range Icon",
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
+            if (dateTimeUpdated) {
+                IconButton(onClick = {
+                    currentDate = LocalDate.now()
+                    currentTime = LocalTime.now()
+                    dateTimeUpdated = false
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close Icon",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            } else {
+                IconButton(onClick = {
+                    dateDialog.show()
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Date Range Icon",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
             if (selectedStory != null) {
                 DeleteStoryAction(
@@ -129,6 +161,34 @@ fun WriteTopBar(
                 )
             }
         }
+    )
+
+    CalendarDialog(
+        state = dateDialog,
+        selection = CalendarSelection.Date { localDate ->
+            currentDate = localDate
+            timeDialog.show()
+        },
+        config = CalendarConfig(yearSelection = true, monthSelection = true)
+    )
+
+    ClockDialog(
+        state = timeDialog,
+        selection = ClockSelection.HoursMinutes { hours, minutes ->
+            dateTimeUpdated = true
+            currentTime = LocalTime.of(hours, minutes, 0)
+            onDateTimeUpdated(
+                ZonedDateTime.of(
+                    currentDate,
+                    currentTime,
+                    ZoneId.systemDefault()
+                )
+            )
+        },
+        config = ClockConfig(
+            defaultTime = currentTime,
+            is24HourFormat = true
+        )
     )
 }
 

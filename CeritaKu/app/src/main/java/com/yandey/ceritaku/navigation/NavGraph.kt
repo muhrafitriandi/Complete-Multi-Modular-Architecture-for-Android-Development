@@ -247,6 +247,9 @@ fun NavGraphBuilder.writeRoute(
                         showSnackbar(message = it, withDismissAction = true)
                     }
                 }
+            },
+            onDateTimeUpdated = {
+                viewModel.setUpdatedDateTime(it)
             }
         )
     }

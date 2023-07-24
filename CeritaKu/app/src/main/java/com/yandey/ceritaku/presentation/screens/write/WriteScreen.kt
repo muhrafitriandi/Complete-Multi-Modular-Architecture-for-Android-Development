@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.yandey.ceritaku.model.Mood
 import com.yandey.ceritaku.model.Story
+import java.time.ZonedDateTime
 
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -25,12 +26,22 @@ fun WriteScreen(
     onDeleteConfirmed: () -> Unit,
     onSaveClicked: (Story) -> Unit,
     onFieldError: (String) -> Unit,
+    onDateTimeUpdated: (ZonedDateTime) -> Unit,
 ) {
     LaunchedEffect(key1 = uiState.mood) {
         pagerState.scrollToPage(Mood.valueOf(uiState.mood.name).ordinal)
     }
 
     Scaffold(
+        topBar = {
+            WriteTopBar(
+                selectedStory = uiState.selectedStory,
+                onBackPressed = onBackPressed,
+                onDeleteConfirmed = onDeleteConfirmed,
+                moodName = moodName,
+                onDateTimeUpdated = onDateTimeUpdated
+            )
+        },
         snackbarHost = { SnackbarHost(hostState = hostState) },
         content = {
             WriteContent(
@@ -43,14 +54,6 @@ fun WriteScreen(
                 pagerState = pagerState,
                 onSaveClicked = onSaveClicked,
                 onFieldError = onFieldError
-            )
-        },
-        topBar = {
-            WriteTopBar(
-                selectedStory = uiState.selectedStory,
-                onBackPressed = onBackPressed,
-                onDeleteConfirmed = onDeleteConfirmed,
-                moodName = moodName
             )
         },
     )
