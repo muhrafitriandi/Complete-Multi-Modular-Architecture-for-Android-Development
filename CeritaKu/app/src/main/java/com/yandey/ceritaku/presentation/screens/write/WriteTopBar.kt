@@ -63,19 +63,31 @@ fun WriteTopBar(
     onDateTimeUpdated: (ZonedDateTime) -> Unit,
 ) {
     var dateTimeUpdated by remember { mutableStateOf(false) }
-    val dateDialog = rememberUseCaseState()
-    val timeDialog = rememberUseCaseState()
+    var realTimeUpdated by remember { mutableStateOf(true) }
+    var confirmedDateDialog by remember { mutableStateOf(false) }
+    var confirmedTimeDialog by remember { mutableStateOf(false) }
+
+    val dateDialog = rememberUseCaseState(
+        onDismissRequest = { realTimeUpdated = true },
+        onFinishedRequest = { realTimeUpdated = !confirmedDateDialog }
+    )
+    val timeDialog = rememberUseCaseState(
+        onDismissRequest = { realTimeUpdated = true },
+        onFinishedRequest = { realTimeUpdated = !confirmedTimeDialog }
+    )
     var currentDate by remember { mutableStateOf(LocalDate.now()) }
     var currentTime by remember { mutableStateOf(LocalTime.now()) }
 
     val scope = rememberCoroutineScope()
-    LaunchedEffect(dateTimeUpdated) {
+    LaunchedEffect(realTimeUpdated) {
         scope.launch {
-            while (!dateTimeUpdated) {
-                val timeUntilNextMinute = calculateTimeUntilNextMinute()
-                currentDate = LocalDate.now()
-                currentTime = LocalTime.now()
-                delay(timeUntilNextMinute)
+            while (realTimeUpdated) {
+                if (!dateTimeUpdated) {
+                    val timeUntilNextMinute = calculateTimeUntilNextMinute()
+                    currentDate = LocalDate.now()
+                    currentTime = LocalTime.now()
+                    delay(timeUntilNextMinute)
+                }
             }
         }
     }
@@ -136,6 +148,7 @@ fun WriteTopBar(
                     currentDate = LocalDate.now()
                     currentTime = LocalTime.now()
                     dateTimeUpdated = false
+                    realTimeUpdated = true
                 }) {
                     Icon(
                         imageVector = Icons.Default.Close,
@@ -146,6 +159,7 @@ fun WriteTopBar(
             } else {
                 IconButton(onClick = {
                     dateDialog.show()
+                    realTimeUpdated = false
                 }) {
                     Icon(
                         imageVector = Icons.Default.DateRange,
@@ -167,6 +181,7 @@ fun WriteTopBar(
         state = dateDialog,
         selection = CalendarSelection.Date { localDate ->
             currentDate = localDate
+            confirmedDateDialog = true
             timeDialog.show()
         },
         config = CalendarConfig(yearSelection = true, monthSelection = true)
@@ -176,6 +191,7 @@ fun WriteTopBar(
         state = timeDialog,
         selection = ClockSelection.HoursMinutes { hours, minutes ->
             dateTimeUpdated = true
+            confirmedTimeDialog = true
             currentTime = LocalTime.of(hours, minutes, 0)
             onDateTimeUpdated(
                 ZonedDateTime.of(
